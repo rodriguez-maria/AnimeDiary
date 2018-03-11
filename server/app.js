@@ -111,8 +111,8 @@ app.get('/animes', function (req, res) {
 
 app.post('/notes', function (req, res) {
     console.log('notes/ ', req.body);
-    if (!req.body || !req.body.user_id || !req.body.anime_id || !req.body.note) {
-        res.status(500).send({'error': 'user_id, anime_id, and note are required.'});
+    if (!req.body || !req.body.user_id || !req.body.anime_id || !req.body.note || !req.body.ratings) {
+        res.status(500).send({'error': 'user_id, anime_id, ratings, and note are required.'});
         return;
     }
     db.collection('users').findOne({_id: new ObjectId(req.body.user_id)}, function (err, user) {
@@ -149,7 +149,8 @@ app.post('/notes', function (req, res) {
                 anime_id: req.body.anime_id,
                 anime_title: anime.title,
                 anime_image: anime.image,
-                note: req.body.note
+                note: req.body.note,
+                ratings: req.body.ratings
             };
 
             db.collection('notes').save(obj, function (err, result) {
@@ -163,7 +164,7 @@ app.post('/notes', function (req, res) {
                     }
                 }
                 else {
-                    find_user_animes(req, res, req.body.user_id);
+                    find_user_notes(req, res, req.body.user_id);
                 }
             });
         });
@@ -177,41 +178,36 @@ app.get('/notes', function (req, res) {
         return;
     }
     if (req.query.user_id) {
-        find_user_animes(req, res, req.query.user_id);
+        find_user_notes(req, res, req.query.user_id);
     }
     else {
-        find_one_anime(req, res, req.query._id);
+        find_one_note(req, res, req.query._id);
     }
 });
 
 app.put('/notes', function (req, res) {
     console.log('notes/ ', req.query);
-    if (!req.query || !req.query._id || !req.body.note) {
-        res.status(500).send({'error': '_id and note are required.'});
+    if (!req.query || !req.query._id || !req.body.note || !req.body.ratings) {
+        res.status(500).send({'error': '_id, note, and ratings are required.'});
         return;
     }
-    if (req.query.user_id) {
-        find_user_animes(req, res, req.query.user_id);
-    }
-    else {
-        db.collection('notes').findAndModify(
-            {_id: new ObjectId(req.query._id)}, // query
-            [['_id', 'asc']],  // sort order
-            {$set: {note: req.body.note}}, // replacement
-            {}, // options
-            function (err, object) {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send({'error': 'Unable to update. Please try again.'});
-                } else {
-                    find_one_anime(req, res, req.query._id);
-                }
+    db.collection('notes').findAndModify(
+        {_id: new ObjectId(req.query._id)}, // query
+        [['_id', 'asc']],  // sort order
+        {$set: {note: req.body.note, ratings: req.body.ratings}}, // replacement
+        {}, // options
+        function (err, object) {
+            if (err) {
+                console.error(err);
+                res.status(500).send({'error': 'Unable to update. Please try again.'});
+            } else {
+                find_one_note(req, res, req.query._id);
             }
-        );
-    }
+        }
+    );
 });
 
-function find_user_animes(req, res, user_id) {
+function find_user_notes(req, res, user_id) {
     db.collection('notes').find({user_id: user_id}).toArray(function (err, results) {
         if (err) {
             console.error(err);
@@ -220,20 +216,29 @@ function find_user_animes(req, res, user_id) {
         }
 
         //console.log(results);
-        res.send(results);
+        res.send(results.map(function (n) {
+            if (!n.ratings) {
+                n.ratings = 0;
+            }
+            return n;
+        }));
     });
 }
 
-function find_one_anime(req, res, _id) {
+function find_one_note(req, res, _id) {
     db.collection('notes').findOne({_id: new ObjectId(_id)}, function (err, note) {
-            if (err) {
-                console.error(err);
-                res.status(500).send({'error': 'Something went wrong. Please try again.'});
+        if (err) {
+            console.error(err);
+            res.status(500).send({'error': 'Something went wrong. Please try again.'});
+        }
+        else {
+            if (!note.ratings) {
+                note.ratings = 0;
             }
-            else {
-                res.send(note);
-            }
-        });
+
+            res.send(note);
+        }
+    });
 }
 
 app.get('/', function (req, res) {
