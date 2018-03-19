@@ -26,7 +26,7 @@ MongoClient.connect('mongodb://testuser:testpassword@ds263988.mlab.com:63988/ani
 
 
 app.post('/register', function (req, res) {
-    console.log('register/ ', req.body);
+    console.log('POST /register/ ', JSON.stringify(req.body));
     if (!req.body || !req.body.user_name || !req.body.name || !req.body.password) {
         res.status(500).send({'error': 'user_name, name, and password are required.'});
         return;
@@ -51,11 +51,13 @@ app.post('/register', function (req, res) {
         else {
             db.collection('users').findOne({user_name: req.body.user_name}, function (err, user) {
                 if (err) {
+                    console.error(err);
                     res.status(500).send({'error': 'Something went wrong. Please try again.'});
                 }
                 else {
                     delete user['password_hash'];
                     user['success'] = true;
+                    console.log('[Response] POST /register/ ', JSON.stringify(user));
                     res.send(user);
                 }
             });
@@ -64,7 +66,7 @@ app.post('/register', function (req, res) {
 });
 
 app.post('/login', function (req, res) {
-    console.log('login/ ', req.body);
+    console.log('POST /login/ ', JSON.stringify(req.body));
     if (!req.body || !req.body.user_name || !req.body.password) {
         res.status(500).send({'error': 'user_name and password are required.'});
         return;
@@ -77,17 +79,20 @@ app.post('/login', function (req, res) {
             return;
         }
 
-        console.log(results);
+        console.log(results.length + ' users found for username '+ req.body.user_name);
         var unauthorized = {"error": "Unauthorized"};
         if (!results || results.length == 0) {
+            console.error(unauthorized);
             res.status(401).send(unauthorized);
         }
         else if (bcrypt.compareSync(req.body.password, results[0].password_hash)) {
             delete results[0]['password_hash'];
             results[0]['success'] = true;
+            console.log('[Response] POST /login/ ', JSON.stringify(results[0]));
             res.send(results[0]);
         }
         else {
+            console.error(unauthorized);
             res.status(401).send(unauthorized);
         }
     });
@@ -95,7 +100,7 @@ app.post('/login', function (req, res) {
 
 
 app.get('/animes', function (req, res) {
-    console.log(req.query);
+    console.log('GET /animes/ ', JSON.stringify(req.query));
     var search = req.query.search;
     db.collection('animes').find({title: new RegExp(search, 'i')}).toArray(function (err, results) {
         if (err) {
@@ -104,13 +109,13 @@ app.get('/animes', function (req, res) {
             return;
         }
 
-        //console.log(results);
+        console.log('Sending back ' + results.length + ' animes.');
         res.send(results);
     });
 });
 
 app.post('/notes', function (req, res) {
-    console.log('notes/ ', req.body);
+    console.log('GET /notes/ ', JSON.stringify(req.body));
     if (!req.body || !req.body.user_id || !req.body.anime_id || !req.body.note || !req.body.ratings) {
         res.status(500).send({'error': 'user_id, anime_id, ratings, and note are required.'});
         return;
@@ -127,8 +132,6 @@ app.post('/notes', function (req, res) {
             res.status(500).send({'error': 'User not found.'});
             return;
         }
-
-        console.log('user', user);
 
         db.collection('animes').findOne({_id: new ObjectId(req.body.anime_id)}, function (err, anime) {
             if (err) {
@@ -172,7 +175,7 @@ app.post('/notes', function (req, res) {
 });
 
 app.get('/notes', function (req, res) {
-    console.log('notes/ ', req.query);
+    console.log('GET /notes/ ', JSON.stringify(req.query));
     if (!req.query || !(req.query.user_id || req.query._id)) {
         res.status(500).send({'error': 'user_id or _id is required.'});
         return;
@@ -186,7 +189,7 @@ app.get('/notes', function (req, res) {
 });
 
 app.put('/notes', function (req, res) {
-    console.log('notes/ ', req.query);
+    console.log('PUT /notes/ ', JSON.stringify(req.query), JSON.stringify(req.body));
     if (!req.query || !req.query._id || !req.body.note || !req.body.ratings) {
         res.status(500).send({'error': '_id, note, and ratings are required.'});
         return;
@@ -215,7 +218,8 @@ function find_user_notes(req, res, user_id) {
             return;
         }
 
-        //console.log(results);
+        console.log('Sending back ' + results.length + ' notes.');
+
         res.send(results.map(function (n) {
             if (!n.ratings) {
                 n.ratings = 0;
