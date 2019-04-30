@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
@@ -13,6 +14,8 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 // parse application/json
 app.use(bodyParser.json())
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 MongoClient.connect('mongodb://testuser:testpassword@ds263988.mlab.com:63988/animediary', function (err, client) {
     if (err) {
