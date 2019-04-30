@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+require('express-async-errors');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
@@ -8,6 +9,7 @@ const bcrypt = require('bcrypt');
 const salt = 10;
 var db;
 const PORT = process.env.PORT || 8080;
+const animeController = require('./controllers/anime_controller')
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}))
@@ -17,6 +19,16 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/animediary')
+ .then(() => console.log('MongoDB connected…'))
+ .catch(err => console.log(err))
+
+app.listen(PORT, function () {
+        console.log('App listening on port ' + PORT);
+    });
+
+/*
 MongoClient.connect('mongodb://testuser:testpassword@ds263988.mlab.com:63988/animediary', function (err, client) {
     if (err) {
         return console.log(err);
@@ -100,9 +112,9 @@ app.post('/login', function (req, res) {
         }
     });
 });
-
-
-app.get('/animes', function (req, res) {
+*/
+app.get('/animes', animeController.getAnimes);
+/*app.get('/animes', function (req, res) {
     console.log('GET /animes/ ', JSON.stringify(req.query));
     var search = req.query.search;
     db.collection('animes').find({title: new RegExp(search, 'i')}).toArray(function (err, results) {
@@ -247,7 +259,7 @@ function find_one_note(req, res, _id) {
         }
     });
 }
-
+*/
 app.get('/', function (req, res) {
     res.status(200).send('Hello, world!').end();
 });
