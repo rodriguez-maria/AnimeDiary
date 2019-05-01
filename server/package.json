@@ -23,6 +23,8 @@
     "mongoose": "^5.5.5",
     "express-async-errors": "^3.1.1",
     "dotenv": "^7.0.0",
-    "npmlog": "^4.1.2"
+    "npmlog": "^4.1.2",
+    "underscore": "^1.9.1",
+    "nodejs-base64": "^1.0.3"
   }
 }

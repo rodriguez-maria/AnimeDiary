@@ -1,36 +1,38 @@
 const path = require('path');
+const bodyParser = require('body-parser');
+const log = require('npmlog');
+const config = require('./utils/config');
 const express = require('express');
-require('express-async-errors');
+require('express-async-errors'); // To handle uncaught async errors.
+require('./utils/db'); // Connect to database.
+
+// Import controllers.
+const defaultController = require('./controllers/default_controller');
+const animeController = require('./controllers/anime_controller');
+
+
+// Create and setup express app.
 const app = express();
+app.use(bodyParser.urlencoded({extended: false})); // Allow parsing application/x-www-form-urlencoded.
+app.use(bodyParser.json()); // Allow parsing application/json.
+app.use(express.static(path.join(__dirname, 'public'))); // Make contents of public directory directly accessible.
+
+// Start the app.
+app.listen(config.port, () => log.info('app', 'App listening on port %j.', config.port));
+
+app.get('/', defaultController.home);
+app.get('/animes', animeController.getAnimes);
+
+/*
 const MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
-const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const salt = 10;
 var db;
-const config = require('./utils/config');
+
+
 const PORT = process.env.PORT || 8080;
-const animeController = require('./controllers/anime_controller')
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false}))
-
-// parse application/json
-app.use(bodyParser.json())
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-/*
-const mongoose = require('mongoose')
-mongoose.connect(config.mongodbConnectionString)
- .then(() => console.log('MongoDB connected…'))
- .catch(err => console.log(err))
- */
-
-app.listen(config.port, function () {
-        console.log('App listening on port ' + config.port);
-    });
-
+*/
 /*
 MongoClient.connect('mongodb://testuser:testpassword@ds263988.mlab.com:63988/animediary', function (err, client) {
     if (err) {
@@ -116,7 +118,7 @@ app.post('/login', function (req, res) {
     });
 });
 */
-app.get('/animes', animeController.getAnimes);
+
 /*app.get('/animes', function (req, res) {
     console.log('GET /animes/ ', JSON.stringify(req.query));
     var search = req.query.search;
@@ -263,9 +265,7 @@ function find_one_note(req, res, _id) {
     });
 }
 */
-app.get('/', function (req, res) {
-    res.status(200).send('Hello, world!').end();
-});
+
 
 /*
 app.get('/insert', function (req, res) {

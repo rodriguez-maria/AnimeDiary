@@ -8,4 +8,4 @@ const schema = new db.Schema({
 });
 schema.index({title: 1});
 
-module.exports = db.model('anime', schema)
+module.exports = db.model('anime', schema);
