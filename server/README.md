@@ -1,7 +1,7 @@
 # Run the server
 ````
 $ npm install
-$ node app.js
+$ npm start
 ````
 
 # Seed the db with sample list of animes
@@ -13,3 +13,5 @@ mongoimport --db animediary --collection animes --file ./seed/sample_animes.json
 # Start mongodb server
 
 $ mongod --config /usr/local/etc/mongod.conf
+
+Create a copy of sample.env and rename it to .env

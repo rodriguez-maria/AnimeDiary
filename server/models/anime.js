@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const db = require('../utils/db');
 
-const schema = new mongoose.Schema({
+const schema = new db.Schema({
     _id: String,
     desc: String,
     title: String,
@@ -8,4 +8,4 @@ const schema = new mongoose.Schema({
 });
 schema.index({title: 1});
 
-module.exports = mongoose.model('anime', schema)
+module.exports = db.model('anime', schema)

@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const salt = 10;
 var db;
+const config = require('./utils/config');
 const PORT = process.env.PORT || 8080;
 const animeController = require('./controllers/anime_controller')
 
@@ -19,13 +20,15 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+/*
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/animediary')
+mongoose.connect(config.mongodbConnectionString)
  .then(() => console.log('MongoDB connected…'))
  .catch(err => console.log(err))
+ */
 
-app.listen(PORT, function () {
-        console.log('App listening on port ' + PORT);
+app.listen(config.port, function () {
+        console.log('App listening on port ' + config.port);
     });
 
 /*

@@ -1,25 +1,19 @@
 {
-  "name": "appengine-hello-world",
-  "description": "Simple Hello World Node.js sample for Google App Engine Flexible Environment.",
-  "version": "0.0.1",
+  "name": "AnimeDiary",
+  "description": "Maintain your own diary for Anime.",
+  "version": "1.0.0",
   "private": true,
-  "license": "Apache-2.0",
-  "author": "Google Inc.",
+  "license": "mit",
+  "author": "Maria Rodriguez, Faisal Rahman",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git"
+    "url": "https://github.com/rodriguez-maria/AnimeDiary.git"
   },
   "engines": {
     "node": ">=4.3.2"
   },
   "scripts": {
-    "deploy": "gcloud app deploy",
-    "start": "node app.js",
-    "lint": "samples lint",
-    "pretest": "npm run lint",
-    "system-test": "samples test app",
-    "test": "npm run system-test",
-    "e2e-test": "samples test deploy"
+    "start": "node app.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -27,18 +21,8 @@
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
     "mongoose": "^5.5.5",
-    "express-async-errors": "^3.1.1"
-  },
-  "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^3.2.0"
-  },
-  "cloud-repo-tools": {
-    "test": {
-      "app": {
-        "msg": "Hello, world!"
-      }
-    },
-    "requiresKeyFile": true,
-    "requiresProjectId": true
+    "express-async-errors": "^3.1.1",
+    "dotenv": "^7.0.0",
+    "npmlog": "^4.1.2"
   }
 }
