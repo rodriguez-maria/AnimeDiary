@@ -8,6 +8,7 @@ require('./utils/db'); // Connect to database.
 
 // Import controllers.
 const defaultController = require('./controllers/default_controller');
+const sessionController = require('./controllers/session_controller');
 const animeController = require('./controllers/anime_controller');
 
 
@@ -21,6 +22,8 @@ app.use(express.static(path.join(__dirname, 'public'))); // Make contents of pub
 app.listen(config.port, () => log.info('app', 'App listening on port %j.', config.port));
 
 app.get('/', defaultController.home);
+app.post('/login', sessionController.login);
+app.post('/register', sessionController.register);
 app.get('/animes', animeController.getAnimes);
 
 /*

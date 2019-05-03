@@ -25,6 +25,7 @@
     "dotenv": "^7.0.0",
     "npmlog": "^4.1.2",
     "underscore": "^1.9.1",
-    "nodejs-base64": "^1.0.3"
+    "nodejs-base64": "^1.0.3",
+    "jsonwebtoken": "^8.5.1"
   }
 }
