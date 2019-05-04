@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const log = require('npmlog');
 const config = require('./utils/config');
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
 require('express-async-errors'); // To handle uncaught async errors.
 require('./utils/db'); // Connect to database.
 
@@ -22,8 +24,9 @@ app.use(express.static(path.join(__dirname, 'public'))); // Make contents of pub
 app.listen(config.port, () => log.info('app', 'App listening on port %j.', config.port));
 
 app.get('/', defaultController.home);
-app.post('/login', sessionController.login);
-app.post('/register', sessionController.register);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.post('/api/login', sessionController.login);
+app.post('/api/register', sessionController.register);
 app.get('/animes', animeController.getAnimes);
 
 /*

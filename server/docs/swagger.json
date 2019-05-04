@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "AnimeDiary",
+    "description": "API Specifications for Anime Diary project."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "summary": "Login to the system.",
+        "tags": ["Session"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/LoginBody"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully logged into the system.",
+            "content": {
+            "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/LoginSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized user.",
+            "content": {
+            "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/FailureResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "summary": "Create a new account.",
+        "tags": ["Session"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/RegisterBody"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "A new account is successfully created.",
+            "content": {
+            "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/RegisterSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unable to create an account",
+            "content": {
+            "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/FailureResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LoginBody": {
+      "required": [
+        "userName",
+        "password"
+      ],
+      "properties": {
+        "userName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "RegisterBody": {
+      "required": [
+        "userName",
+        "password"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "UserDataWithToken": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "UserDataWithoutToken": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "RegisterSuccessResponse": {
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "default": true
+        },
+        "data": {
+          "type": "array",
+          "$ref": "#/definitions/UserDataWithoutToken"
+        }
+      }
+    },
+    "LoginSuccessResponse": {
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "default": true
+        },
+        "data": {
+          "type": "array",
+          "$ref": "#/definitions/UserDataWithToken"
+        }
+      }
+    },
+    "FailureResponse": {
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "default": false
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
