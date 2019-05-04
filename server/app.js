@@ -4,7 +4,7 @@ const log = require('npmlog');
 const config = require('./utils/config');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
+const swaggerDocument = require('./docs/swagger');
 require('express-async-errors'); // To handle uncaught async errors.
 require('./utils/db'); // Connect to database.
 

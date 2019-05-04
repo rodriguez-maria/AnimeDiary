@@ -15,27 +15,26 @@
     "/api/login": {
       "post": {
         "summary": "Login to the system.",
-        "tags": ["Session"],
+        "tags": [
+          "Session"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/LoginBody"
+                "$ref": "#/components/schemas/LoginBody"
               }
             }
           }
         },
-        "produces": [
-          "application/json"
-        ],
         "responses": {
           "200": {
             "description": "User successfully logged into the system.",
             "content": {
-            "application/json": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/LoginSuccessResponse"
+                  "$ref": "#/components/schemas/LoginSuccessResponse"
                 }
               }
             }
@@ -43,9 +42,9 @@
           "401": {
             "description": "Unauthorized user.",
             "content": {
-            "application/json": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/FailureResponse"
+                  "$ref": "#/components/schemas/FailureResponse"
                 }
               }
             }
@@ -56,27 +55,26 @@
     "/api/register": {
       "post": {
         "summary": "Create a new account.",
-        "tags": ["Session"],
+        "tags": [
+          "Session"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/RegisterBody"
+                "$ref": "#/components/schemas/RegisterBody"
               }
             }
           }
         },
-        "produces": [
-          "application/json"
-        ],
         "responses": {
           "200": {
             "description": "A new account is successfully created.",
             "content": {
-            "application/json": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/RegisterSuccessResponse"
+                  "$ref": "#/components/schemas/RegisterSuccessResponse"
                 }
               }
             }
@@ -84,9 +82,118 @@
           "400": {
             "description": "Unable to create an account",
             "content": {
-            "application/json": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/FailureResponse"
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/animes": {
+      "get": {
+        "summary": "Search animes.",
+        "tags": [
+          "Animes"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "path",
+            "description": "Used for searching animes by. Searches all animes if empty value is passed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "path",
+            "description": "Must be one of to-do, favourite, my-list. Searches all animes if empty value is passed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "path",
+            "description": "The max number of animes to return. Default value of 10 is used when empty value is passed.",
+            "required": true,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of animes returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnimeSuccessResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Somthing went wrong while searching.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user's anime.",
+        "tags": [
+          "Animes"
+        ],
+        "parameters": [
+          {
+            "name": "animeId",
+            "in": "path",
+            "description": "The anime to update for the logged in user.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAnimeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of animes returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnimeSuccessResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Somthing went wrong while searching.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
                 }
               }
             }
@@ -95,99 +202,160 @@
       }
     }
   },
-  "definitions": {
-    "LoginBody": {
-      "required": [
-        "userName",
-        "password"
-      ],
-      "properties": {
-        "userName": {
-          "type": "string"
+  "components": {
+    "schemas": {
+      "LoginBody": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
         },
-        "password": {
-          "type": "string"
+        "required": [
+          "userName",
+          "password"
+        ]
+      },
+      "RegisterBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoginBody"
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "RegisterBody": {
-      "required": [
-        "userName",
-        "password"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "userName": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
+      },
+      "UpdateAnimeBody": {
+        "type": "object",
+        "properties": {
+          "ratings": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
-      }
-    },
-    "UserDataWithToken": {
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "userName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "token": {
-          "type": "string"
+      },
+      "UserData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "UserDataWithoutToken": {
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "userName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+      },
+      "UserDataWithToken": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UserData"
+          }
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "RegisterSuccessResponse": {
-      "properties": {
-        "success": {
-          "type": "boolean",
-          "default": true
-        },
-        "data": {
-          "type": "array",
-          "$ref": "#/definitions/UserDataWithoutToken"
+      },
+      "AnimeData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "desc": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "LoginSuccessResponse": {
-      "properties": {
-        "success": {
-          "type": "boolean",
-          "default": true
-        },
-        "data": {
-          "type": "array",
-          "$ref": "#/definitions/UserDataWithToken"
+      },
+      "UserAnimeData": {
+        "type": "object",
+        "properties": {
+          "anime": {
+            "$ref": "#/components/schemas/AnimeData"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
-      }
-    },
-    "FailureResponse": {
-      "properties": {
-        "success": {
-          "type": "boolean",
-          "default": false
-        },
-        "error": {
-          "type": "string"
+      },
+      "AnimeSuccessResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserAnimeData"
+            }
+          }
+        }
+      },
+      "RegisterSuccessResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserData"
+          }
+        }
+      },
+      "LoginSuccessResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserDataWithToken"
+          }
+        }
+      },
+      "FailureResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "error": {
+            "type": "string"
+          }
         }
       }
     }
