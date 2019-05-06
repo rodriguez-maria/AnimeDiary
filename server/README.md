@@ -1,5 +1,5 @@
 # AnimeDiary Server
-The server for the AnimeDiary project is written in [express](https://expressjs.com/) with [MongoDB](https://www.mongodb.com/) as data source.
+The server for the AnimeDiary project is written in [express](https://expressjs.com/) with [MongoDB](https://www.mongodb.com/) as its data source.
 
 ## Getting Started
 Use the following steps to get the project and start the server locally.
@@ -46,3 +46,6 @@ For the first time or if there is any error, you may need to run the following c
 ```
 $ npm install
 ```
+
+## API documentations
+The updated API docs can be found at http://localhost:8080/api-docs/ when running locally. You can also view this at the [Swagger Petstore](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/rodriguez-maria/AnimeDiary/master/server/docs/swagger.json).
