@@ -34,7 +34,7 @@ You will need to do this only once.
 Create a copy of `sample.env` and rename it to `.env`. Change the settings in the `.env` if needed.
 
 
-# Running the server
+### Running the server
 Start the web server by running the following command from `./server` directory.
 
 ````
