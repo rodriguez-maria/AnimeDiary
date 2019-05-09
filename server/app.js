@@ -8,6 +8,8 @@ const swaggerDocument = require('./docs/swagger');
 require('express-async-errors'); // To handle uncaught async errors.
 require('./utils/db'); // Connect to database.
 
+const authMiddleware = require('./middlewares/auth')
+
 // Import controllers.
 const defaultController = require('./controllers/default_controller');
 const sessionController = require('./controllers/session_controller');
@@ -23,11 +25,15 @@ app.use(express.static(path.join(__dirname, 'public'))); // Make contents of pub
 // Start the app.
 app.listen(config.port, () => log.info('app', 'App listening on port %j.', config.port));
 
+// Unauthenticated APIs.
 app.get('/', defaultController.home);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.post('/api/login', sessionController.login);
 app.post('/api/register', sessionController.register);
-app.get('/animes', animeController.getAnimes);
+
+// Authenticated APIs.
+app.use(authMiddleware.authorize);
+app.get('/api/animes', animeController.getAnimes);
 
 /*
 const MongoClient = require('mongodb').MongoClient;

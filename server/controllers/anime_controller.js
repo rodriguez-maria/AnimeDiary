@@ -22,7 +22,7 @@ const getAnimes = async (req, res) => {
         log.info('getAnimes', 'Returned %j results.', animes.length);
         jsonResponse.success(res, animes, utils.getCursor(skip + limit));
     } catch (err) {
-        log.error.log('getAnimes', err);
+        log.error('getAnimes', err);
         jsonResponse.error(res, 'Server error.')
     }
 };

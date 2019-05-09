@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {base64encode, base64decode} = require('nodejs-base64');
-const config = require('./config')
+const config = require('./config');
+const log = require('npmlog');
 
 const getBaseUrl = req => req.protocol + '://' + req.get('host');
 
@@ -28,6 +29,15 @@ const validateHash = async (original, hashed) => await bcrypt.compare(original, 
 
 const generateToken = (id, expiresInSec = 86400) => jwt.sign({id: id}, config.tokenSecret, {expiresIn: expiresInSec});
 
+const validateToken = (token) => {
+    try {
+        return jwt.verify(token, config.tokenSecret);
+    } catch (err) {
+        log.error('validateToken', err);
+        return null;
+    }
+};
+
 // TODO: Use additional rules.
 const validatePasswordStrength = password => password && password.length > 5;
 
@@ -38,5 +48,6 @@ module.exports = {
     getHash: getHash,
     validateHash: validateHash,
     generateToken: generateToken,
+    validateToken: validateToken,
     validatePasswordStrength: validatePasswordStrength
 };

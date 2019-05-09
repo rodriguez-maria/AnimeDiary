@@ -98,6 +98,11 @@
         "tags": [
           "Animes"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "search",
@@ -134,7 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnimeSuccessResponse"
+                  "$ref": "#/components/schemas/AnimeListSuccessResponse"
                 }
               }
             }
@@ -155,6 +160,11 @@
         "summary": "Update a user's anime.",
         "tags": [
           "Animes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "parameters": [
           {
@@ -179,7 +189,7 @@
         },
         "responses": {
           "200": {
-            "description": "A list of animes returned.",
+            "description": "Updated anime returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -203,6 +213,14 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Header name: \"Authorization\", Sample Value: \"Bearer eyJhbGciOiJI...\""
+      }
+    },
     "schemas": {
       "LoginBody": {
         "type": "object",
@@ -312,6 +330,17 @@
         }
       },
       "AnimeSuccessResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserAnimeData"
+          }
+        }
+      },
+      "AnimeListSuccessResponse": {
         "properties": {
           "success": {
             "type": "boolean",
