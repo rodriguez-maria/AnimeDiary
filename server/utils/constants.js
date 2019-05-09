@@ -1,3 +1,3 @@
 module.exports = {
-    MAX_SEARCH_RESULTS: 30
-};
+  MAX_SEARCH_RESULTS: 30
+}

@@ -28,5 +28,8 @@
     "nodejs-base64": "^1.0.3",
     "jsonwebtoken": "^8.5.1",
     "swagger-ui-express": "^4.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
   }
 }
