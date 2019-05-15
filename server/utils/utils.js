@@ -23,9 +23,9 @@ const decodeCursor = cursor => {
   return decoded.skip
 }
 
-const getHash = async original => await bcrypt.hash(original, config.passwordSalt)
+const getHash = async original => bcrypt.hash(original, config.passwordSalt)
 
-const validateHash = async (original, hashed) => await bcrypt.compare(original, hashed)
+const validateHash = async (original, hashed) => bcrypt.compare(original, hashed)
 
 const generateToken = (id, expiresInSec = 86400) => jwt.sign({ id: id }, config.tokenSecret, { expiresIn: expiresInSec })
 

@@ -1,14 +1,14 @@
 module.exports.success = (res, data, cursor = null) => {
-  var to_send = {
+  let toSend = {
     'success': true,
     'data': data
   }
 
   if (cursor) {
-    to_send['cursor'] = cursor
+    toSend['cursor'] = cursor
   }
 
-  res.send(to_send)
+  res.send(toSend)
 }
 
 module.exports.error = (res, message, code = 500) => {
