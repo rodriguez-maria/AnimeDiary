@@ -50,7 +50,7 @@ const register = async (req, res) => {
     if (user) {
       throw new Error('Username is not available.')
     }
-/*	
+/*
     if (utils.validatePasswordStrength(password)) {
       throw new Error('Password is weak.')
     }
@@ -61,7 +61,8 @@ const register = async (req, res) => {
     if (!user) {
       throw new Error('Unable to create a user.')
     }
-    user = jsonify(user)
+    const token = utils.generateToken(user._id)
+    user = jsonify(user, token)
 
     log.info('register', user)
     jsonResponse.success(res, user)
