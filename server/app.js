@@ -33,6 +33,8 @@ app.post('/api/register', sessionController.register)
 // Authenticated APIs.
 app.use(authMiddleware.authorize)
 app.get('/api/animes', animeController.getAnimes)
+app.get('/api/anime', animeController.getAnime)
+app.put('/api/anime', animeController.getAnime) //TODO
 
 /*
 const MongoClient = require('mongodb').MongoClient;

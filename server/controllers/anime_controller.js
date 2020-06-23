@@ -27,6 +27,30 @@ const getAnimes = async (req, res) => {
   }
 }
 
+const getAnime = async (req, res) => {
+  try {
+    log.info('getAnime', 'Params: %j', req.query)
+
+    const animeId = req.query.animeId
+    if (!animeId) {
+      throw new Error('The param animeId is needed.')
+    }
+
+    let anime = await animeRepository.getAnime(animeId)
+    if(anime){
+      log.info('getAnime', 'Found with animeId %j.', animeId)
+      const baseUrl = utils.getBaseUrl(req)
+      jsonResponse.success(res, jsonify(anime, baseUrl))
+    } else{
+      log.info('getAnime', 'Not found with animeId %j.', animeId)
+      jsonResponse.error(res, 'Not found.', 404)
+    }
+  } catch (err) {
+    log.error('getAnimes', err)
+    jsonResponse.error(res, 'Server error.')
+  }
+}
+
 const jsonify = (anime, baseUrl = '') => {
   const json = {
     id: anime._id,
@@ -43,5 +67,6 @@ const jsonify = (anime, baseUrl = '') => {
 }
 
 module.exports = {
-  getAnimes: getAnimes
+  getAnimes: getAnimes,
+  getAnime: getAnime,
 }

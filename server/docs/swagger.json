@@ -155,6 +155,62 @@
             }
           }
         }
+      }
+    },
+    "/api/anime": {
+      "get": {
+        "summary": "Get anime by Id.",
+        "tags": [
+          "Animes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "animeId",
+            "in": "path",
+            "description": "Id of the anime",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An anime is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnimeSuccessResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Somthing went wrong while searching.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Anime not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          }
+        }
       },
       "put": {
         "summary": "Update a user's anime.",
@@ -212,6 +268,7 @@
       }
     }
   },
+  
   "components": {
     "securitySchemes": {
       "bearerAuth": {
