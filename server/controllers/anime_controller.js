@@ -2,6 +2,7 @@ const log = require('npmlog')
 const _ = require('underscore')
 
 const animeRepository = require('../repositories/anime_repository')
+const userAnimeRepository = require('../repositories/user_anime_repository')
 const constants = require('../utils/constants')
 const jsonResponse = require('../utils/json_response')
 const utils = require('../utils/utils')
@@ -16,43 +17,62 @@ const getAnimes = async (req, res) => {
     const skip = utils.decodeCursor(req.query.cursor)
 
     const baseUrl = utils.getBaseUrl(req)
-    let animes = await animeRepository.searchAnimes(search, skip, limit)
-    animes = _.map(animes, a => jsonify(a, baseUrl))
+    if(!req.query.tags){
+      let animes = await animeRepository.searchAnimes(search, skip, limit)
+      animes = _.map(animes, a => jsonify(a, baseUrl))
+      log.info('getAnimes', 'Returned %j results.', animes.length)
+      jsonResponse.success(res, animes, utils.getCursor(skip + limit))
+    } else {
+      let animes = await userAnimeRepository.searchUserAnimes(req.authUser._id, search, skip, limit)
+      animes = _.map(animes, ua => jsonify(ua.anime, baseUrl, ua.rating, ua.notes, ua.tags))
+      log.info('getAnimes', 'Returned %j results.', animes.length)
+      jsonResponse.success(res, animes, utils.getCursor(skip + limit))
+    }
 
-    log.info('getAnimes', 'Returned %j results.', animes.length)
-    jsonResponse.success(res, animes, utils.getCursor(skip + limit))
+
   } catch (err) {
     log.error('getAnimes', err)
     jsonResponse.error(res, 'Server error.')
   }
 }
 
-const getAnime = async (req, res) => {
+const updateAnime = async (req, res) => {
   try {
-    log.info('getAnime', 'Params: %j', req.query)
+    log.info('updateAnime', 'Params: %j Body: %j', req.query, req.body)
 
     const animeId = req.query.animeId
-    if (!animeId) {
-      throw new Error('The param animeId is needed.')
-    }
+    const rating = req.body.rating
+    const notes = req.body.notes
+    const tags = req.body.tags
+
+    validateUpdateAnimeInput(animeId, rating, notes, tags)
 
     let anime = await animeRepository.getAnime(animeId)
-    if(anime){
-      log.info('getAnime', 'Found with animeId %j.', animeId)
-      const baseUrl = utils.getBaseUrl(req)
-      jsonResponse.success(res, jsonify(anime, baseUrl))
-    } else{
-      log.info('getAnime', 'Not found with animeId %j.', animeId)
+    if(!anime){
+      log.info('updateAnime', 'Not found with animeId %j.', animeId)
       jsonResponse.error(res, 'Not found.', 404)
+      return
     }
+
+    log.info('updateAnime', 'Found with animeId %j.', animeId)
+    userAnime = await userAnimeRepository.updateUserAnimes(animeId, req.authUser._id, rating, notes, tags, anime.title)
+    const baseUrl = utils.getBaseUrl(req)
+    jsonResponse.success(res, jsonify(userAnime.anime, baseUrl, userAnime.rating, userAnime.notes, userAnime.tags))
   } catch (err) {
-    log.error('getAnimes', err)
+    log.error('updateAnime', err)
     jsonResponse.error(res, 'Server error.')
   }
 }
 
-const jsonify = (anime, baseUrl = '') => {
-  const json = {
+const validateUpdateAnimeInput = (animeId, rating, notes, tags) => {
+  if (!animeId) {
+    throw new Error('The param animeId is needed.')
+  }
+  //TODO
+}
+
+const jsonify = (anime, baseUrl = '', rating = null, notes = null, tags = null) => {
+  const anime_json = {
     id: anime._id,
     desc: anime.desc,
     title: anime.title
@@ -60,7 +80,23 @@ const jsonify = (anime, baseUrl = '') => {
 
   if (anime.image && anime.image.startsWith('/')) {
     // Locally hosted image. Return full url.
-    anime.image = baseUrl + anime.image
+    anime_json.image = baseUrl + anime.image
+  }
+
+  json = {
+    anime: anime_json
+  }
+
+  if (rating) {
+    json.rating = rating
+  }
+
+  if (notes) {
+    json.notes = notes
+  }
+
+  if (tags) {
+    json.tags = tags
   }
 
   return json
@@ -68,5 +104,5 @@ const jsonify = (anime, baseUrl = '') => {
 
 module.exports = {
   getAnimes: getAnimes,
-  getAnime: getAnime,
+  updateAnime: updateAnime,
 }

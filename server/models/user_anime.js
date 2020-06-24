@@ -6,8 +6,8 @@ const schema = new db.Schema({
   notes: String,
   rating: Number,
   tags: [String],
-  search: String
+  search: String,
 })
-schema.index({ anime_id: 1, user_id: 1, tags: 1, search: 1 })
+schema.index({ anime: 1, user: 1, tags: 1})
 
 module.exports = db.model('user_anime', schema)

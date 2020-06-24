@@ -116,7 +116,7 @@
           {
             "name": "tag",
             "in": "path",
-            "description": "Must be one of to-do, favourite, my-list. Searches all animes if empty value is passed.",
+            "description": "If passed, searches animes belong to the logged on user. Comma separated for multiple.",
             "required": true,
             "schema": {
               "type": "string"
@@ -146,62 +146,6 @@
           },
           "500": {
             "description": "Somthing went wrong while searching.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FailureResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/anime": {
-      "get": {
-        "summary": "Get anime by Id.",
-        "tags": [
-          "Animes"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "animeId",
-            "in": "path",
-            "description": "Id of the anime",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "An anime is returned.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AnimeSuccessResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Somthing went wrong while searching.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FailureResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Anime not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -254,6 +198,16 @@
               }
             }
           },
+          "404": {
+            "description": "Anime not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Somthing went wrong while searching.",
             "content": {
@@ -268,7 +222,7 @@
       }
     }
   },
-  
+
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -309,7 +263,7 @@
       "UpdateAnimeBody": {
         "type": "object",
         "properties": {
-          "ratings": {
+          "rating": {
             "type": "number"
           },
           "notes": {
