@@ -1,12 +1,18 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { base64encode, base64decode } = require('nodejs-base64')
+const {
+  base64encode,
+  base64decode
+} = require('nodejs-base64')
 const config = require('./config')
 const log = require('npmlog')
 
 const getBaseUrl = req => req.protocol + '://' + req.get('host')
 
-const getCursor = skip => base64encode(JSON.stringify({ skip: skip, time: Date.now() }))
+const getCursor = skip => base64encode(JSON.stringify({
+  skip: skip,
+  time: Date.now()
+}))
 
 const decodeCursor = cursor => {
   if (!cursor) {
@@ -27,7 +33,11 @@ const getHash = async original => bcrypt.hash(original, config.passwordSalt)
 
 const validateHash = async (original, hashed) => bcrypt.compare(original, hashed)
 
-const generateToken = (id, expiresInSec = 86400) => jwt.sign({ id: id }, config.tokenSecret, { expiresIn: expiresInSec })
+const generateToken = (id, expiresInSec = 86400) => jwt.sign({
+  id: id
+}, config.tokenSecret, {
+  expiresIn: expiresInSec
+})
 
 const validateToken = (token) => {
   try {

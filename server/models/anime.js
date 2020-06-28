@@ -6,6 +6,8 @@ const schema = new db.Schema({
   title: String,
   image: String
 })
-schema.index({ title: 1 })
+schema.index({
+  title: 1
+})
 
 module.exports = db.model('anime', schema)

@@ -7,7 +7,9 @@ const getUser = async (id = '', userName = '') => {
   }
 
   if (userName) {
-    return User.findOne({ user_name: userName })
+    return User.findOne({
+      user_name: userName
+    })
   }
 
   return null

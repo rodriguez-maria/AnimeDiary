@@ -5,12 +5,10 @@
     "title": "AnimeDiary",
     "description": "API Specifications for Anime Diary project."
   },
-  "servers": [
-    {
-      "url": "http://localhost:8080",
-      "description": "Development server"
-    }
-  ],
+  "servers": [{
+    "url": "http://localhost:8080",
+    "description": "Development server"
+  }],
   "paths": {
     "/api/login": {
       "post": {
@@ -98,13 +96,10 @@
         "tags": [
           "Animes"
         ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
+        "security": [{
+          "bearerAuth": []
+        }],
+        "parameters": [{
             "name": "search",
             "in": "path",
             "description": "Used for searching animes by. Searches all animes if empty value is passed.",
@@ -161,22 +156,18 @@
         "tags": [
           "Animes"
         ],
-        "security": [
-          {
-            "bearerAuth": []
+        "security": [{
+          "bearerAuth": []
+        }],
+        "parameters": [{
+          "name": "animeId",
+          "in": "path",
+          "description": "The anime to update for the logged in user.",
+          "required": true,
+          "schema": {
+            "type": "string"
           }
-        ],
-        "parameters": [
-          {
-            "name": "animeId",
-            "in": "path",
-            "description": "The anime to update for the logged in user.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        }],
         "requestBody": {
           "required": true,
           "content": {
@@ -249,11 +240,9 @@
         ]
       },
       "RegisterBody": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/LoginBody"
-          }
-        ],
+        "allOf": [{
+          "$ref": "#/components/schemas/LoginBody"
+        }],
         "properties": {
           "name": {
             "type": "string"
@@ -292,11 +281,9 @@
         }
       },
       "UserDataWithToken": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/UserData"
-          }
-        ],
+        "allOf": [{
+          "$ref": "#/components/schemas/UserData"
+        }],
         "properties": {
           "token": {
             "type": "string"

@@ -3,7 +3,10 @@ const mongoose = require('mongoose')
 const log = require('npmlog')
 
 mongoose.set('useFindAndModify', false);
-mongoose.connect(config.mongodbConnectionString, { useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect(config.mongodbConnectionString, {
+    useNewUrlParser: true,
+    useCreateIndex: true
+  })
   .then(() => log.info('db', 'MongoDB connected.'))
   .catch(err => log.error(err))
 

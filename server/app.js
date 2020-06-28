@@ -17,7 +17,9 @@ const animeController = require('./controllers/anime_controller')
 
 // Create and setup express app.
 const app = express()
-app.use(bodyParser.urlencoded({ extended: false })) // Allow parsing application/x-www-form-urlencoded.
+app.use(bodyParser.urlencoded({
+    extended: false
+})) // Allow parsing application/x-www-form-urlencoded.
 app.use(bodyParser.json()) // Allow parsing application/json.
 app.use(express.static(path.join(__dirname, 'public'))) // Make contents of public directory directly accessible.
 

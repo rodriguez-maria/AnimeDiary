@@ -17,7 +17,7 @@ const getAnimes = async (req, res) => {
     const skip = utils.decodeCursor(req.query.cursor)
 
     const baseUrl = utils.getBaseUrl(req)
-    if(!req.query.tags){
+    if (!req.query.tags) {
       let animes = await animeRepository.searchAnimes(search, skip, limit)
       animes = _.map(animes, a => jsonify(a, baseUrl))
       log.info('getAnimes', 'Returned %j results.', animes.length)
@@ -48,7 +48,7 @@ const updateAnime = async (req, res) => {
     validateUpdateAnimeInput(animeId, rating, notes, tags)
 
     let anime = await animeRepository.getAnime(animeId)
-    if(!anime){
+    if (!anime) {
       log.info('updateAnime', 'Not found with animeId %j.', animeId)
       jsonResponse.error(res, 'Not found.', 404)
       return
