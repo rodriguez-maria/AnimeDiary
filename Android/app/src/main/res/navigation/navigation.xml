@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/titlePage">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.marmarovas.animediary.screens.login.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_animesListPage"
+            app:destination="@id/animesListPage" />
+        <action
+            android:id="@+id/action_loginFragment_to_createAccountFragment"
+            app:destination="@id/createAccountFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/titlePage"
+        android:name="com.marmarovas.animediary.screens.titlepage.TitlePage"
+        android:label="fragment_title_page"
+        tools:layout="@layout/fragment_title_page" >
+        <action
+            android:id="@+id/action_titlePage_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_titlePage_to_animesListPage"
+            app:destination="@id/animesListPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/animesListPage"
+        android:name="com.marmarovas.animediary.screens.animeslistpage.AnimesListPageFragment"
+        android:label="animes_list_page_fragment"
+        tools:layout="@layout/animes_list_page_fragment" >
+        <action
+            android:id="@+id/action_go_back_to_title_page"
+            app:destination="@id/titlePage"
+            app:exitAnim="@anim/fragment_close_exit"
+            app:popUpTo="@id/titlePage" />
+    </fragment>
+    <fragment
+        android:id="@+id/createAccountFragment"
+        android:name="com.marmarovas.animediary.screens.createaccount.CreateAccountFragment"
+        android:label="CreateAccountFragment" >
+        <action
+            android:id="@+id/action_createAccountFragment_to_animesListPage"
+            app:destination="@id/animesListPage" />
+    </fragment>
+</navigation>
