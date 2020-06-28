@@ -1,10 +1,18 @@
 const UserAnime = require('../models/user_anime')
+const _ = require('underscore')
 
-const searchUserAnimes = async (user_id, search = '', skip = 0, limit = 0) => {
-  return UserAnime.find({
-      user: user_id,
-      search: new RegExp(search, 'i')
-    },
+const searchUserAnimes = async (user_id, search = '', tags = [], skip = 0, limit = 0) => {
+  let queryObj = {
+    user: user_id,
+    search: new RegExp(search, 'i'),
+  }
+  if (!_.isEmpty(tags)) {
+    queryObj.tags = {
+      $in: tags
+    }
+  }
+  return UserAnime.find(
+    queryObj,
     null, {
       skip: skip,
       limit: limit

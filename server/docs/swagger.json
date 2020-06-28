@@ -103,16 +103,26 @@
             "name": "search",
             "in": "path",
             "description": "Used for searching animes by. Searches all animes if empty value is passed.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "tag",
+            "name": "my_list",
             "in": "path",
-            "description": "If passed, searches animes belong to the logged on user. Comma separated for multiple.",
-            "required": true,
+            "description": "Pass as my_list=true to get the animes of the logged in user.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "tags",
+            "in": "path",
+            "description": "Used when my_list=1 parm is passed. Searches animes by tags. Comma separated for multiple (will return results that matches any of the tags).",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -121,7 +131,7 @@
             "name": "limit",
             "in": "path",
             "description": "The max number of animes to return. Default value of 10 is used when empty value is passed.",
-            "required": true,
+            "required": false,
             "allowEmptyValue": true,
             "schema": {
               "type": "number"
@@ -141,6 +151,16 @@
           },
           "500": {
             "description": "Somthing went wrong while searching.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
             "content": {
               "application/json": {
                 "schema": {
@@ -185,6 +205,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AnimeSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
                 }
               }
             }
@@ -349,6 +379,9 @@
             "items": {
               "$ref": "#/components/schemas/UserAnimeData"
             }
+          },
+          "cursor": {
+            "type": "string"
           }
         }
       },

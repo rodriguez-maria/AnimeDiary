@@ -50,11 +50,11 @@ const register = async (req, res) => {
     if (user) {
       throw new Error('Username is not available.')
     }
-    /*
-        if (utils.validatePasswordStrength(password)) {
-          throw new Error('Password is weak.')
-        }
-    */
+
+    if (!utils.validatePasswordStrength(password)) {
+      throw new Error('Password is weak.')
+    }
+
     // Ready to create a new user.
     password = await utils.getHash(password)
     user = await userRepository.createUser(userName, password, name)

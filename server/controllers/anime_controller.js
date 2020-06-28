@@ -17,19 +17,19 @@ const getAnimes = async (req, res) => {
     const skip = utils.decodeCursor(req.query.cursor)
 
     const baseUrl = utils.getBaseUrl(req)
-    if (!req.query.tags) {
-      let animes = await animeRepository.searchAnimes(search, skip, limit)
+    let animes;
+    if (!shouldSearchMyList(req)) {
+      animes = await animeRepository.searchAnimes(search, skip, limit)
       animes = _.map(animes, a => jsonify(a, baseUrl))
-      log.info('getAnimes', 'Returned %j results.', animes.length)
-      jsonResponse.success(res, animes, utils.getCursor(skip + limit))
+      log.info('getAnimes', 'Search Animes returned %j results.', animes.length)
     } else {
-      let animes = await userAnimeRepository.searchUserAnimes(req.authUser._id, search, skip, limit)
+      let tags = req.query.tags
+      tags = !!tags ? tags.split(',') : []
+      animes = await userAnimeRepository.searchUserAnimes(req.authUser._id, search, tags, skip, limit)
       animes = _.map(animes, ua => jsonify(ua.anime, baseUrl, ua.rating, ua.notes, ua.tags))
-      log.info('getAnimes', 'Returned %j results.', animes.length)
-      jsonResponse.success(res, animes, utils.getCursor(skip + limit))
+      log.info('getAnimes', 'Search UserAnimes returned %j results.', animes.length)
     }
-
-
+    jsonResponse.success(res, animes, utils.getCursor(skip + limit))
   } catch (err) {
     log.error('getAnimes', err)
     jsonResponse.error(res, 'Server error.')
@@ -37,16 +37,23 @@ const getAnimes = async (req, res) => {
 }
 
 const updateAnime = async (req, res) => {
+
+  log.info('updateAnime', 'Params: %j Body: %j', req.query, req.body)
+
+  const animeId = req.query.animeId
+  const rating = req.body.rating
+  const notes = req.body.notes
+  const tags = req.body.tags
+
   try {
-    log.info('updateAnime', 'Params: %j Body: %j', req.query, req.body)
-
-    const animeId = req.query.animeId
-    const rating = req.body.rating
-    const notes = req.body.notes
-    const tags = req.body.tags
-
     validateUpdateAnimeInput(animeId, rating, notes, tags)
+  } catch (err) {
+    log.error('updateAnime', err)
+    jsonResponse.error(res, err.message, 400)
+    return
+  }
 
+  try {
     let anime = await animeRepository.getAnime(animeId)
     if (!anime) {
       log.info('updateAnime', 'Not found with animeId %j.', animeId)
@@ -68,8 +75,9 @@ const validateUpdateAnimeInput = (animeId, rating, notes, tags) => {
   if (!animeId) {
     throw new Error('The param animeId is needed.')
   }
-  //TODO
 }
+
+const shouldSearchMyList = req => req.query && req.query.my_list === 'true'
 
 const jsonify = (anime, baseUrl = '', rating = null, notes = null, tags = null) => {
   const anime_json = {
