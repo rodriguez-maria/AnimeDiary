@@ -15,9 +15,18 @@ class AnimesListPageViewModel : ViewModel() {
     val errorMessage = MutableLiveData<String>()
     var isUnauthorized : Boolean = false
 
-    fun getAnimes(search : String, tag : String, limit : String, context : Context){
+    /**
+     * Retrives a list of animes
+     *
+     * search : Used for searching animes by. Searches all animes if empty value is passed.
+     * myList : true -> get the animes of the logged user. Anything else will return the generic list of animes
+     * tags : Searches animes by tags. Comma separated for multiple (will return results that matches any of the tags).
+     * limit : The max number of animes to return
+     * context : the current context of the fragment
+     */
+    fun getAnimes(search : String, myList : Boolean, tags : String, limit : Int, context : Context){
 
-        AnimeDiaryAPI.getAnimesList(search, tag, limit, context, object : AnimeDiaryAPICallback<Animes?> {
+        AnimeDiaryAPI.getAnimesList(search, myList, tags, limit, context, object : AnimeDiaryAPICallback<Animes?> {
 
             override fun onFailure(response: Animes?) {
                 if(response == null){
@@ -34,24 +43,4 @@ class AnimesListPageViewModel : ViewModel() {
             }
         })
     }
-
-//    fun getAnimesList(search : String, tag : String, limit : String, token : String){
-//
-//        AnimeDiaryAPI.retrofitService.getAnimesList(search, tag, limit, token).enqueue(
-//            object : Callback<Animes>{
-//                override fun onFailure(call: Call<Animes>, t: Throwable) {
-//
-//                }
-//
-//                override fun onResponse(call: Call<Animes>, response: Response<Animes>) {
-//                    if(response.isSuccessful){
-//                        Log.v("AnimesList VM", response.body().toString())
-//                    } else {
-//                        Log.v("AnimesList VM", response.errorBody().toString())
-//                    }
-//
-//                }
-//            }
-//        )
-//    }
 }

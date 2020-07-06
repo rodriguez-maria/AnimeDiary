@@ -6,6 +6,7 @@ buildscript {
         navigationVersion = '2.2.2'
         retrofit_version = '2.5.0'
         moshi_version = '1.9.2'
+        glide_version = '4.10.0'
     }
 
     repositories {
@@ -13,6 +14,7 @@ buildscript {
         jcenter()
         
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

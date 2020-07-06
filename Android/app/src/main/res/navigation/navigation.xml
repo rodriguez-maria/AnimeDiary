@@ -11,11 +11,11 @@
         android:label="login_fragment"
         tools:layout="@layout/login_fragment" >
         <action
-            android:id="@+id/action_loginFragment_to_animesListPage"
-            app:destination="@id/animesListPage" />
-        <action
             android:id="@+id/action_loginFragment_to_createAccountFragment"
             app:destination="@id/createAccountFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_myCollectionListFragment"
+            app:destination="@id/myCollectionListFragment" />
     </fragment>
     <fragment
         android:id="@+id/titlePage"
@@ -26,26 +26,49 @@
             android:id="@+id/action_titlePage_to_loginFragment"
             app:destination="@id/loginFragment" />
         <action
-            android:id="@+id/action_titlePage_to_animesListPage"
-            app:destination="@id/animesListPage" />
-    </fragment>
-    <fragment
-        android:id="@+id/animesListPage"
-        android:name="com.marmarovas.animediary.screens.animeslistpage.AnimesListPageFragment"
-        android:label="animes_list_page_fragment"
-        tools:layout="@layout/animes_list_page_fragment" >
-        <action
-            android:id="@+id/action_go_back_to_title_page"
-            app:destination="@id/titlePage"
-            app:exitAnim="@anim/fragment_close_exit"
-            app:popUpTo="@id/titlePage" />
+            android:id="@+id/action_titlePage_to_myCollectionListFragment"
+            app:destination="@id/myCollectionListFragment" />
     </fragment>
     <fragment
         android:id="@+id/createAccountFragment"
         android:name="com.marmarovas.animediary.screens.createaccount.CreateAccountFragment"
         android:label="CreateAccountFragment" >
         <action
-            android:id="@+id/action_createAccountFragment_to_animesListPage"
-            app:destination="@id/animesListPage" />
+            android:id="@+id/action_createAccountFragment_to_myCollectionListFragment"
+            app:destination="@id/myCollectionListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/myCollectionListFragment"
+        android:name="com.marmarovas.animediary.screens.animeslistpage.MyCollectionListFragment"
+        android:label="fragment_my_collection_list"
+        tools:layout="@layout/fragment_my_collection_list" >
+        <action
+            android:id="@+id/action_go_back_to_title_page"
+            app:destination="@id/titlePage"
+            app:popUpTo="@id/titlePage" />
+        <action
+            android:id="@+id/action_myCollectionListFragment_to_addAnimeListFragment"
+            app:destination="@id/addAnimeListFragment" />
+        <action
+            android:id="@+id/action_myCollectionListFragment_to_reviewPageFragment"
+            app:destination="@id/reviewPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAnimeListFragment"
+        android:name="com.marmarovas.animediary.screens.animeslistpage.AddAnimeListFragment"
+        android:label="fragment_add_anime_list"
+        tools:layout="@layout/fragment_add_anime_list" >
+        <action
+            android:id="@+id/action_addAnimeListFragment_to_myCollectionListFragment"
+            app:destination="@id/myCollectionListFragment"
+            app:popUpTo="@id/myCollectionListFragment" />
+        <action
+            android:id="@+id/action_addAnimeListFragment_to_reviewPageFragment"
+            app:destination="@id/reviewPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewPageFragment"
+        android:name="com.marmarovas.animediary.screens.reviewpage.ReviewPageFragment"
+        android:label="review_page_fragment"
+        tools:layout="@layout/review_page_fragment" />
 </navigation>

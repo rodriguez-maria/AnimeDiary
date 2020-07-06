@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 import com.marmarovas.animediary.R
+import com.marmarovas.animediary.SharedViewModel
 import com.marmarovas.animediary.utils.OnFragmentChangedActionBarListener
 import com.marmarovas.animediary.utils.TokenDataAccess
 
@@ -20,23 +22,26 @@ import com.marmarovas.animediary.utils.TokenDataAccess
  */
 class TitlePage : Fragment() {
 
+    private  val sharedViewModel by activityViewModels<SharedViewModel>()
+
     private lateinit var actionBarListener : OnFragmentChangedActionBarListener
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            actionBarListener = context as OnFragmentChangedActionBarListener
-        } catch (e : ClassCastException){
-            throw java.lang.ClassCastException(context.toString() + e.message)
-        }
-    }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        try {
+//            actionBarListener = context as OnFragmentChangedActionBarListener
+//        } catch (e : ClassCastException){
+//            throw java.lang.ClassCastException(context.toString() + e.message)
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        actionBarListener.setActionBarVisibility(false)
+        //don't show action bar on this fragment
+        sharedViewModel.setShowActionBar(false)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_title_page, container, false)
@@ -55,7 +60,8 @@ class TitlePage : Fragment() {
         if(token == null){
             findNavController().navigate(R.id.action_titlePage_to_loginFragment)
         } else {
-            findNavController().navigate(R.id.action_titlePage_to_animesListPage)
+//            findNavController().navigate(R.id.action_titlePage_to_animesListPage)
+            findNavController().navigate(R.id.action_titlePage_to_myCollectionListFragment)
         }
     }
 

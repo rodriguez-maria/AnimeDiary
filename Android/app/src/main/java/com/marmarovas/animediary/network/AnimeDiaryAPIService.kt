@@ -9,7 +9,9 @@ import com.marmarovas.animediary.network.animes.Anime
 import com.marmarovas.animediary.network.animes.Animes
 import com.marmarovas.animediary.network.login.Login
 import com.marmarovas.animediary.network.registeruser.User
+import com.marmarovas.animediary.utils.CacheDataAccess
 import com.marmarovas.animediary.utils.TokenDataAccess
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
@@ -55,8 +57,9 @@ interface AnimeDiaryAPIService {
     fun getAnimesList(
         @Header("Authorization") token: String,
         @Query("search") search: String,
-        @Query("tag") tag: String,
-        @Query("limit") limit: String
+        @Query("my_list") myList: Boolean,
+        @Query("tags") tags: String,
+        @Query("limit") limit: Int
     ):
             Call<Animes>
 }
@@ -100,22 +103,26 @@ object AnimeDiaryAPI {
     }
 
     /**
-     * Return an anime object
-     * search : used for searching animes
-     * tag : must be one of the following: to-do, favourite or my-list
-     * limit : the max number of anime objects to return
+     * Return an Animes object
+     *
+     * search : Used for searching animes by. Searches all animes if empty value is passed.
+     * myList : true -> get the animes of the logged user. Anything else will return the generic list of animes
+     * tags : Searches animes by tags. Comma separated for multiple (will return results that matches any of the tags).
+     * limit : The max number of animes to return
+     * context : the current context of the fragment
      */
     fun getAnimesList(
         search: String,
-        tag: String,
-        limit: String,
+        myList : Boolean,
+        tags: String,
+        limit: Int,
         context: Context,
         animeCallback: AnimeDiaryAPICallback<Animes?>
     ) {
 
         val token = TokenDataAccess.getToken(context)
 
-        retrofitService.getAnimesList("Bearer $token" ?: "", search, tag, limit).enqueue(
+        retrofitService.getAnimesList("Bearer $token" ?: "", search, myList, tags, limit).enqueue(
             object : Callback<Animes> {
 
                 override fun onFailure(call: Call<Animes>, t: Throwable) {

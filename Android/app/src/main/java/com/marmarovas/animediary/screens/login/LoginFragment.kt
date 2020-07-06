@@ -66,7 +66,8 @@ class LoginFragment : Fragment() {
         if(isSuccessful){
 
             Toast.makeText(activity, "Success", Toast.LENGTH_SHORT).show()
-            NavHostFragment.findNavController(this).navigate(R.id.action_loginFragment_to_animesListPage)
+//            NavHostFragment.findNavController(this).navigate(R.id.action_loginFragment_to_animesListPage)
+            NavHostFragment.findNavController(this).navigate(R.id.action_loginFragment_to_myCollectionListFragment)
 
         } else {
             var message = "Unknown error"

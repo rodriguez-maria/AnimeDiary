@@ -2,12 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!--Add-->
     <item
         android:id="@+id/action_add_review"
+        android:title="Add Anime Review"
         android:icon="@android:drawable/ic_input_add"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|collapseActionView"/>
+
+    <!--search-->
+    <item
+        android:id="@+id/action_search"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <!--Log out-->
     <item
         android:id="@+id/action_log_out"
         android:title="Log out"
-        app:showAsAction="never" />
+        app:showAsAction="never|collapseActionView" />
 </menu>

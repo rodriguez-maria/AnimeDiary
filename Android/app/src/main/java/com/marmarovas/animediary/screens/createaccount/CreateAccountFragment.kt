@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 
 import com.marmarovas.animediary.R
+import com.marmarovas.animediary.SharedViewModel
 import com.marmarovas.animediary.databinding.CreateAccountFragmentBinding
 
 class CreateAccountFragment : Fragment() {
@@ -20,8 +22,9 @@ class CreateAccountFragment : Fragment() {
         fun newInstance() = CreateAccountFragment()
     }
 
-    private lateinit var viewModel: CreateAccountViewModel
+    private  val sharedViewModel by activityViewModels<SharedViewModel>()
 
+    private lateinit var viewModel: CreateAccountViewModel
     private lateinit var binding : CreateAccountFragmentBinding
 
     override fun onCreateView(
@@ -46,6 +49,9 @@ class CreateAccountFragment : Fragment() {
 
         binding.createButton.setOnClickListener { onCreate() }
 
+        //don't show action bar on this fragment
+        sharedViewModel.setShowActionBar(false)
+
         return binding.root
     }
 
@@ -64,7 +70,8 @@ class CreateAccountFragment : Fragment() {
     private fun goToNextFragment(isSuccessful : Boolean){
         if(isSuccessful){
             Toast.makeText(activity, "Success", Toast.LENGTH_SHORT).show()
-            NavHostFragment.findNavController(this).navigate(R.id.action_createAccountFragment_to_animesListPage)
+//            NavHostFragment.findNavController(this).navigate(R.id.action_createAccountFragment_to_animesListPage)
+            NavHostFragment.findNavController(this).navigate(R.id.action_createAccountFragment_to_myCollectionListFragment)
         } else {
             Toast.makeText(activity, "Unable to create an account.Try later.", Toast.LENGTH_SHORT)
                 .show()
