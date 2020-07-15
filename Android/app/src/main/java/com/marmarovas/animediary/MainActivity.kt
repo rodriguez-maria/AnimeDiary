@@ -10,16 +10,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.marmarovas.animediary.databinding.ActivityMainBinding
-import com.marmarovas.animediary.utils.OnFragmentChangedActionBarListener
 import com.marmarovas.animediary.utils.TokenDataAccess
 
 /**
@@ -27,15 +24,15 @@ import com.marmarovas.animediary.utils.TokenDataAccess
  * Navigation Host.
  */
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     private var actionBar: ActionBar? = null
-    private var actionBarMenu : Menu? = null
+    private var actionBarMenu: Menu? = null
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mainNavController : NavController
+    private lateinit var mainNavController: NavController
 
-    private val sharedViewModel by viewModels<SharedViewModel>()
+    private val actionBarViewModel by viewModels<ActionBarViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +46,8 @@ class MainActivity : AppCompatActivity(){
         setSupportActionBar(binding.appActionBar)
 
         //Up button will not be displayed on these destinations
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.titlePage, R.id.myCollectionListFragment))
+        val appBarConfiguration =
+            AppBarConfiguration(setOf(R.id.titlePage, R.id.myCollectionListFragment))
 
         //Set up the action "Up Button"
         setupActionBarWithNavController(mainNavController, appBarConfiguration)
@@ -68,8 +66,6 @@ class MainActivity : AppCompatActivity(){
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
 
-        val addView = menu.findItem(R.id.action_add_review)
-
         searchView.setSearchableInfo(manager.getSearchableInfo(componentName))
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -81,7 +77,7 @@ class MainActivity : AppCompatActivity(){
 //                searchView.clearFocus()
 //                searchView.setQuery("", false)
 //                searchItem.collapseActionView()
-                sharedViewModel.setSearchQuery(query)
+                actionBarViewModel.setSearchQuery(query)
                 Toast.makeText(this@MainActivity, "Query is $query", Toast.LENGTH_LONG).show()
                 return true
             }
@@ -89,15 +85,15 @@ class MainActivity : AppCompatActivity(){
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                //This tells Android OS that the content of the menu has changed and menu should be redrawn
-                invalidateOptionsMenu()
-                sharedViewModel.setSearchButtonExpanded(false)
+                if (mainNavController.currentDestination?.id == R.id.addAnimeListFragment){
+                    actionBarViewModel.goToMyAnimeCollectionPage.sendAction(true)
+                } else {
+                    invalidateOptionsMenu()
+                }
                 return true
             }
 
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                menu.findItem(R.id.action_add_review)?.isVisible = false
-                sharedViewModel.setSearchButtonExpanded(true)
                 return true
             }
         })
@@ -107,32 +103,13 @@ class MainActivity : AppCompatActivity(){
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         actionBarMenu = menu
-
-//        if(menu != null){
-//            val addItem = menu.findItem(R.id.action_add_review)
-//            val searchItem = menu.findItem(R.id.action_search)
-//
-//            if(!searchItem.isActionViewExpanded && !addItem.isVisible){
-//                addItem.isVisible = true
-//            }
-//
-//            if(!searchItem.isActionViewExpanded){
-//                sharedViewModel.setSearchButtonExpanded(false)
-//            }
-//
-//            if(!addItem.isVisible){
-//                searchItem.expandActionView()
-//            }
-//        }
         return super.onPrepareOptionsMenu(menu);
     }
-
 
     //Handle action bar click action event
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_add_review -> {
             //go to add screen
-//            sharedViewModel.onAddReviewAction(true)
             item.isVisible = false
             actionBarMenu?.findItem(R.id.action_search)?.expandActionView()
             mainNavController.navigate(R.id.action_myCollectionListFragment_to_addAnimeListFragment)
@@ -141,6 +118,21 @@ class MainActivity : AppCompatActivity(){
 
         R.id.action_search -> {
             actionBarMenu?.findItem(R.id.action_add_review)?.isVisible = false
+            actionBarMenu?.findItem(R.id.action_save_or_edit)?.isVisible = false
+            true
+        }
+
+        R.id.action_save_or_edit -> {
+            val saveOrEditView = actionBarMenu?.findItem(R.id.action_save_or_edit)
+
+            if (saveOrEditView?.title != null && saveOrEditView.title == getString(R.string.save_text)) {
+                saveOrEditView.title = getString(R.string.edit_text)
+                actionBarViewModel.onSaveClicked()
+            } else {
+                saveOrEditView?.title = getString(R.string.save_text)
+                actionBarViewModel.onEditClicked()
+            }
+
             true
         }
 
@@ -152,7 +144,7 @@ class MainActivity : AppCompatActivity(){
             invalidateOptionsMenu()
 
             //Reset the value (fix bug temporarily. Not sure why the observer gets triggered after logging out and logging in again)
-            sharedViewModel.onAddReviewAction(false)
+            actionBarViewModel.onAddReviewAction(false)
 
             //Go to title screen
             mainNavController.navigate(R.id.action_go_back_to_title_page)
@@ -168,24 +160,81 @@ class MainActivity : AppCompatActivity(){
         return mainNavController.navigateUp()
     }
 
-    private fun addObservers(){
+    private fun addObservers() {
         //Observer action bar title changes
-        sharedViewModel.actionBarTitle.observe(this, Observer {
+        actionBarViewModel.actionBarTitle.observe(this, Observer {
             actionBar?.title = it
         })
 
         //Observe action bar subtitle changes
-        sharedViewModel.actionBarSubtitle.observe(this, Observer {
+        actionBarViewModel.actionBarSubtitle.observe(this, Observer {
             actionBar?.subtitle = it
         })
 
         //Observer show or hide action bar
-        sharedViewModel.showActionBar.observe(this, Observer {
-            if(it){
+        actionBarViewModel.showActionBar.observe(this, Observer {
+            if (it) {
                 actionBar?.show()
             } else {
                 actionBar?.hide()
             }
+        })
+
+        //Observe the save review button (hide or show)
+        actionBarViewModel.showReviewPageActionBarMenu.observe(this, Observer {
+            it?.let {
+                actionBarMenu?.findItem(R.id.action_add_review)?.isVisible = false
+                actionBarMenu?.findItem(R.id.action_search)?.isVisible = false
+                actionBarMenu?.findItem(R.id.action_log_out)?.isVisible = false
+                actionBarMenu?.findItem(R.id.action_save_or_edit)?.isVisible = true
+
+                val searchView = actionBarMenu?.findItem(R.id.action_search)
+                if(searchView != null && searchView.isActionViewExpanded){
+                    actionBarMenu?.findItem(R.id.action_search)?.collapseActionView()
+                }
+
+                val saveOrEditView = actionBarMenu?.findItem(R.id.action_save_or_edit)
+                saveOrEditView?.title = getString(R.string.edit_text)
+            }
+        })
+
+        //Observe request to display "My Collection" screen action bar menu
+        actionBarViewModel.showMyCollectionPageActionBarMenu.observe(this, Observer {
+            it.let {
+                actionBarMenu?.findItem(R.id.action_add_review)?.isVisible = true
+                actionBarMenu?.findItem(R.id.action_search)?.isVisible = true
+                actionBarMenu?.findItem(R.id.action_log_out)?.isVisible = true
+                actionBarMenu?.findItem(R.id.action_save_or_edit)?.isVisible = false
+
+                val searchView = actionBarMenu?.findItem(R.id.action_search)
+                if(searchView != null && searchView.isActionViewExpanded){
+                    actionBarMenu?.findItem(R.id.action_search)?.collapseActionView()
+                }
+            }
+        })
+
+        //Observe request to display "Add Review Page" screen action bar menu
+        actionBarViewModel.showAddReviewPageActionBarMenu.observe(this, Observer {
+            it.let {
+                actionBarMenu?.findItem(R.id.action_add_review)?.isVisible = false
+                actionBarMenu?.findItem(R.id.action_log_out)?.isVisible = false
+                actionBarMenu?.findItem(R.id.action_save_or_edit)?.isVisible = false
+
+                actionBarMenu?.findItem(R.id.action_search)?.isVisible = true
+                actionBarMenu?.findItem(R.id.action_search)?.expandActionView()
+            }
+        })
+
+        //Observe action when to collapse or expand search view
+        actionBarViewModel.collapseSearchAction.observe(this, Observer {
+            it?.let {
+                actionBarMenu?.findItem(R.id.action_search)?.collapseActionView()
+            }
+        })
+
+        //Observe whether to show the save button
+        actionBarViewModel.showSaveButton.observe(this, Observer {
+            actionBarMenu?.findItem(R.id.action_save_or_edit)?.title = getString(R.string.save_text)
         })
     }
 

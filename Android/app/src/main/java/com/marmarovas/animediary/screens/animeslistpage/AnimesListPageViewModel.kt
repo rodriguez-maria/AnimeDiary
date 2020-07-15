@@ -2,17 +2,22 @@ package com.marmarovas.animediary.screens.animeslistpage
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.marmarovas.animediary.network.AnimeDiaryAPI
 import com.marmarovas.animediary.network.AnimeDiaryAPICallback
 import com.marmarovas.animediary.network.animes.Animes
 import com.marmarovas.animediary.network.animes.AnimeData
+import com.marmarovas.animediary.utils.ActionLiveData
 
 class AnimesListPageViewModel : ViewModel() {
 
     val animes = MutableLiveData<List<AnimeData>>()
-    val errorMessage = MutableLiveData<String>()
+//    val errorMessage = MutableLiveData<String>()
+
+    val errorMessage = ActionLiveData<String>()
+
     var isUnauthorized : Boolean = false
 
     /**
@@ -30,7 +35,8 @@ class AnimesListPageViewModel : ViewModel() {
 
             override fun onFailure(response: Animes?) {
                 if(response == null){
-                    errorMessage.value = "Unable to process request at the moment."
+//                    errorMessage.value = "Unable to process request at the moment."
+                    errorMessage.sendAction("Unable to process request at the moment.")
                 } else {
                     Log.d("Animes VM", response.error.toString())
                     isUnauthorized = response.error == "401"

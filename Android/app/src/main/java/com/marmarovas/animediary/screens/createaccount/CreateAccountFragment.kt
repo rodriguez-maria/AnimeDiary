@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 
 import com.marmarovas.animediary.R
-import com.marmarovas.animediary.SharedViewModel
+import com.marmarovas.animediary.ActionBarViewModel
 import com.marmarovas.animediary.databinding.CreateAccountFragmentBinding
 
 class CreateAccountFragment : Fragment() {
@@ -22,7 +22,7 @@ class CreateAccountFragment : Fragment() {
         fun newInstance() = CreateAccountFragment()
     }
 
-    private  val sharedViewModel by activityViewModels<SharedViewModel>()
+    private  val sharedViewModel by activityViewModels<ActionBarViewModel>()
 
     private lateinit var viewModel: CreateAccountViewModel
     private lateinit var binding : CreateAccountFragmentBinding

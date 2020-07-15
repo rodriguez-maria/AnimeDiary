@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="animeData"
-            type="com.marmarovas.animediary.network.animes.AnimeData"/>
+            type="com.marmarovas.animediary.network.animes.AnimeData" />
 
     </data>
 
@@ -48,9 +49,9 @@
             android:id="@+id/anime_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{animeData.anime.title}"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
-            android:text="@{animeData.anime.title}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline_title_right"
             app:layout_constraintHorizontal_bias="0.08"

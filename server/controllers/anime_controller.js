@@ -64,7 +64,7 @@ const updateAnime = async (req, res) => {
     log.info('updateAnime', 'Found with animeId %j.', animeId)
     userAnime = await userAnimeRepository.updateUserAnimes(animeId, req.authUser._id, rating, notes, tags, anime.title)
     const baseUrl = utils.getBaseUrl(req)
-    jsonResponse.success(res, jsonify(userAnime.anime, baseUrl, userAnime.rating, userAnime.notes, userAnime.tags))
+    jsonResponse.success(res, [jsonify(userAnime.anime, baseUrl, userAnime.rating, userAnime.notes, userAnime.tags)])
   } catch (err) {
     log.error('updateAnime', err)
     jsonResponse.error(res, 'Server error.')

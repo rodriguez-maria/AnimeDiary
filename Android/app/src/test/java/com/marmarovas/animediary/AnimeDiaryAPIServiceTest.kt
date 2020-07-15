@@ -128,8 +128,8 @@ class AnimeDiaryAPIServiceTest {
 
         val search = ""
         val tag = "to-do"
-        val limit = ""
-        var response = apiService.getAnimesList(authenticationToken, search, tag, limit).execute()
+        val limit = 50
+        var response = apiService.getAnimesList(authenticationToken, search, true, tag, limit).execute()
 
         var request = server.takeRequest()
 
@@ -150,13 +150,38 @@ class AnimeDiaryAPIServiceTest {
 
         val search = ""
         val tag = "to-do"
-        val limit = ""
-        var response = apiService.getAnimesList(search, tag, limit, authenticationToken).execute()
+        val limit = 50
+        var response = apiService.getAnimesList(authenticationToken, search, true, tag, limit).execute()
 
         assertTrue(response.body() != null)
         assertTrue(response.body()!!.data!!.size == 10)
     }
 
+    //------------------ END ANIMES TESTS --------------------//
+
+    //------------------ UPDATE ANIMEs TESTS --------------------//
+
+    @Test
+    fun `put animes request is populated correctly`(){
+        val authenticationToken = "test_token"
+
+        server.apply{
+            enqueue(MockResponse()
+                .addHeader("Authorization", authenticationToken)
+                .setBody(MockResponseFileReader("update_anime_success_response").getContent()))
+        }
+
+        val rating = 4f
+        val notes = "lalal laallalal lallalala"
+        val tags = listOf<String>()
+        var response = apiService.updateAnimeReview("12345", authenticationToken, rating, notes, tags).execute()
+
+        var request = server.takeRequest()
+
+        assertEquals("PUT", request.method)
+
+        //TODO: Test that the path is correct. (How do I know which is the right path?)
+    }
     //------------------ END ANIMES TESTS --------------------//
 
 

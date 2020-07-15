@@ -1,6 +1,5 @@
 package com.marmarovas.animediary.screens.titlepage
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -9,11 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 import com.marmarovas.animediary.R
-import com.marmarovas.animediary.SharedViewModel
+import com.marmarovas.animediary.ActionBarViewModel
 import com.marmarovas.animediary.utils.OnFragmentChangedActionBarListener
 import com.marmarovas.animediary.utils.TokenDataAccess
 
@@ -22,7 +20,7 @@ import com.marmarovas.animediary.utils.TokenDataAccess
  */
 class TitlePage : Fragment() {
 
-    private  val sharedViewModel by activityViewModels<SharedViewModel>()
+    private  val sharedViewModel by activityViewModels<ActionBarViewModel>()
 
     private lateinit var actionBarListener : OnFragmentChangedActionBarListener
 

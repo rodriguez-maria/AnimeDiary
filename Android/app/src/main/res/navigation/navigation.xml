@@ -50,7 +50,7 @@
             android:id="@+id/action_myCollectionListFragment_to_addAnimeListFragment"
             app:destination="@id/addAnimeListFragment" />
         <action
-            android:id="@+id/action_myCollectionListFragment_to_reviewPageFragment"
+            android:id="@+id/navigate_to_review_page"
             app:destination="@id/reviewPageFragment" />
     </fragment>
     <fragment
@@ -63,12 +63,22 @@
             app:destination="@id/myCollectionListFragment"
             app:popUpTo="@id/myCollectionListFragment" />
         <action
-            android:id="@+id/action_addAnimeListFragment_to_reviewPageFragment"
+            android:id="@+id/navigate_to_review_page"
             app:destination="@id/reviewPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/reviewPageFragment"
         android:name="com.marmarovas.animediary.screens.reviewpage.ReviewPageFragment"
         android:label="review_page_fragment"
-        tools:layout="@layout/review_page_fragment" />
+        tools:layout="@layout/review_page_fragment" >
+        <action
+            android:id="@+id/action_reviewPageFragment_to_myCollectionListFragment"
+            app:destination="@id/myCollectionListFragment"
+            app:popUpTo="@id/myCollectionListFragment"
+            app:popUpToInclusive="false" />
+        <argument
+            android:name="showEdit"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
 </navigation>

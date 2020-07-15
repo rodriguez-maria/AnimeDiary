@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.NonNull
 import com.marmarovas.animediary.R
 import com.marmarovas.animediary.network.animes.Anime
+import com.marmarovas.animediary.network.animes.AnimeData
 import com.marmarovas.animediary.network.animes.Animes
 import com.marmarovas.animediary.network.login.Login
 import com.marmarovas.animediary.network.registeruser.User
@@ -62,6 +63,17 @@ interface AnimeDiaryAPIService {
         @Query("limit") limit: Int
     ):
             Call<Animes>
+
+    @FormUrlEncoded
+    @PUT("animes")
+    fun updateAnimeReview(
+        @Header("Authorization") token: String,
+        @Query("animeId") animeId : String,
+        @Field("rating") rating: Float,
+        @Field("notes") notes: String,
+        @Field("tags") tags: List<String>
+    ):
+            Call<Animes>
 }
 
 //Defines a AnimeDiaryAPI object to initialize the Retrofit service as well as methods to process calls to server
@@ -113,7 +125,7 @@ object AnimeDiaryAPI {
      */
     fun getAnimesList(
         search: String,
-        myList : Boolean,
+        myList: Boolean,
         tags: String,
         limit: Int,
         context: Context,
@@ -154,6 +166,53 @@ object AnimeDiaryAPI {
                 }
             }
         )
+    }
+
+    /**
+     * Updates user's review on the server
+     *
+     * animeID : the id of the anime the user wish to add or update
+     * rating : user's rating provided
+     * notes : user's comments related to the anime
+     * tags : a list of tags to classify the anime
+     * context : necessary to retrieve and authenticate the token
+     */
+    fun addOrUpdateReview(
+        animeId: String,
+        rating: Float?,
+        notes: String?,
+        tags: List<String>?,
+        context: Context?,
+        animeCallback: AnimeDiaryAPICallback<Animes?>
+    ) {
+        val token = TokenDataAccess.getToken(context)
+
+        retrofitService.updateAnimeReview(
+            "Bearer $token" ?: "",
+            animeId,
+            rating ?: 0f,
+            notes ?: "",
+            tags ?: listOf<String>()
+        )
+            .enqueue(
+                object : Callback<Animes> {
+                    override fun onFailure(call: Call<Animes>, t: Throwable) {
+                        animeCallback.onFailure(null)
+                    }
+
+                    override fun onResponse(call: Call<Animes>, response: Response<Animes>) {
+                        if (!response.isSuccessful) {
+                            var animesObj = Animes(
+                                false,
+                                null,
+                                null,
+                                response.code().toString()
+                            )
+                            animeCallback.onFailure(animesObj)
+                        }
+                    }
+                }
+            )
     }
 
 }
