@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--edit changes-->
+    <item
+        android:id="@+id/action_edit"
+        android:title="@string/edit_text"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <!--save changes-->
+    <item
+        android:id="@+id/action_save"
+        android:title="@string/save_text"
+        app:showAsAction="ifRoom|collapseActionView" />
+</menu>

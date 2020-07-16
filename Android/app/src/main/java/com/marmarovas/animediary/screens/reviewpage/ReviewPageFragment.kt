@@ -1,10 +1,9 @@
 package com.marmarovas.animediary.screens.reviewpage
 
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -32,6 +31,9 @@ class ReviewPageFragment : Fragment() {
     private lateinit var animeItem: AnimeData
     private lateinit var binding: ReviewPageFragmentBinding
 
+    private lateinit var editMenuItem : MenuItem
+    private lateinit var saveMenuItem : MenuItem
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,7 +53,46 @@ class ReviewPageFragment : Fragment() {
         //show action bar on this fragment
         actionBarViewModel.setShowActionBar(true)
 
+        //Allows this fragment to participate in the menu layout
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.review_page_fragment_menu, menu)
+
+        saveMenuItem = menu.findItem(R.id.action_save)
+        editMenuItem = menu.findItem(R.id.action_edit)
+
+        //Show the save button and editable options if coming from "add anime fragment"
+        if(args.showEdit){
+            editMenuItem.isVisible = false
+            onEditClicked()
+        } else {
+            saveMenuItem.isVisible = false
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.action_search).isVisible = false
+        menu.findItem(R.id.action_add_review).isVisible = false
+        menu.findItem(R.id.action_log_out).isVisible = false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_edit -> {
+            item.isVisible = false
+            onEditClicked()
+            true
+        }
+        R.id.action_save -> {
+            onSaveClicked()
+            true
+        }
+        else -> {
+            false
+        }
     }
 
     private fun addObservers() {
@@ -62,27 +103,7 @@ class ReviewPageFragment : Fragment() {
             } else {
                 animeItem = it
                 displayItemDetails()
-
-                //Show the save button and editable option if coming from "add anime fragment"
-                if(args.showEdit){
-                    actionBarViewModel.showSaveButton.sendAction(true)
-                    onEditClicked()
-                }
             }
-        })
-
-        //Observer save action
-        actionBarViewModel.saveClickedAction.observe(viewLifecycleOwner, Observer {
-            //Only for testing purposes
-            Toast.makeText(context, "save clicked action observer", Toast.LENGTH_SHORT).show()
-            onSaveClicked()
-        })
-
-        //Observe edit action
-        actionBarViewModel.editClickedAction.observe(viewLifecycleOwner, Observer {
-            //Only for testing purposes
-            Toast.makeText(context, "edit clicked action observer", Toast.LENGTH_SHORT).show()
-            onEditClicked()
         })
 
         //Observe error message
@@ -118,16 +139,23 @@ class ReviewPageFragment : Fragment() {
     }
 
     private fun onEditClicked() {
+        saveMenuItem.isVisible = true
+
         binding.myReviewTextView.visibility = View.GONE
         binding.ratingInstructionTextView.visibility = View.VISIBLE
         binding.writeReviewTextView.visibility = View.VISIBLE
 
-        binding.reviewEditText.setText(animeItem.notes)
+        binding.reviewEditText.setText(binding.myReviewTextView.text)
         binding.reviewEditText.visibility = View.VISIBLE
     }
 
     private fun onSaveClicked() {
-        verifyChanges()
+        if(!verifyChanges()) {
+            return
+        }
+
+        editMenuItem.isVisible = true
+        saveMenuItem.isVisible = false
 
         binding.ratingInstructionTextView.visibility = View.GONE
         binding.writeReviewTextView.visibility = View.GONE
@@ -137,15 +165,15 @@ class ReviewPageFragment : Fragment() {
         binding.myReviewTextView.visibility = View.VISIBLE
     }
 
-    private fun verifyChanges() {
+    private fun verifyChanges() : Boolean {
         if (binding.ratingBar.rating == 0f) {
             showMessage("Please add a rating for this anime")
-            return
+            return false
         }
 
         if(binding.reviewEditText.text.isEmpty()){
             showMessage("Please add a review")
-            return
+            return false
         }
 
         var itemAfterChanges = AnimeData(
@@ -156,6 +184,7 @@ class ReviewPageFragment : Fragment() {
         )
 
         reviewPageViewModel.confirmChanges(animeItem, itemAfterChanges, context)
+        return true
     }
 
     private fun showMessage(message: String) {

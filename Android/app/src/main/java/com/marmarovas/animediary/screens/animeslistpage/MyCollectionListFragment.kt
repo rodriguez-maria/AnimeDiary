@@ -1,11 +1,14 @@
 package com.marmarovas.animediary.screens.animeslistpage
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -41,20 +44,19 @@ class MyCollectionListFragment : AnimesListPageFragment() {
         actionBarViewModel.setActionBarTitle(getString(R.string.app_name))
 //        sharedViewModel.setActionBarSubtitle("My Collection")
 
-        //Display the right menu for this screen
-        actionBarViewModel.showMyCollectionPageActionBarMenu.sendAction(true)
-
         //show action bar on this fragment
         actionBarViewModel.setShowActionBar(true)
+
+        setHasOptionsMenu(true)
 
         return view
     }
 
-    private fun addObservers(){
+    private fun addObservers() {
         //Observe anime data
         viewModel.animes.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, "animes in my collection observer", Toast.LENGTH_SHORT).show()
-            if(it.isEmpty()){
+            if (it.isEmpty()) {
                 displayMessageOnFragment(getString(R.string.empty_dairy_text))
             }
         })
@@ -67,20 +69,42 @@ class MyCollectionListFragment : AnimesListPageFragment() {
 //                actionBarViewModel.setSearchQuery(null)
 //            }
 //        })
-
-        //Observe search bar expansion
-        actionBarViewModel.searchButtonExpanded.observe(viewLifecycleOwner, Observer{
-            Toast.makeText(context, "search button expanded", Toast.LENGTH_SHORT).show()
-            if(!it){
-                displayAnimeList("",true,"",50)
-            }
-        })
     }
 
-    override fun navigateToReviewPage(item : AnimeData){
+    override fun navigateToReviewPage(item: AnimeData) {
         super.navigateToReviewPage(item)
         val action = AddAnimeListFragmentDirections.navigateToReviewPage(false)
         findNavController().navigate(action)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        addReviewMenuItem = menu.findItem(R.id.action_add_review)
+        searchMenuItem = menu.findItem(R.id.action_search)
+        logOutMenuItem = menu.findItem(R.id.action_log_out)
+
+        showActionBarMenuItems(true)
+
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                activity?.invalidateOptionsMenu()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                showActionBarMenuItems(false)
+                return true
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_add_review -> {
+            findNavController().navigate(R.id.action_myCollectionListFragment_to_addAnimeListFragment)
+            true
+        }
+        else -> {
+            false
+        }
+    }
 }
+

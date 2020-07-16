@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -23,10 +24,13 @@ open class AnimesListPageFragment : Fragment() {
     val viewModel by viewModels<AnimesListPageViewModel>()
     val animeItemViewModel by activityViewModels<AnimeItemViewModel>()
 
-    private val adapter = AnimesListAdapter(){
-        it?.let{
-            navigateToReviewPage(it)
-        }
+    //Menu items
+    lateinit var addReviewMenuItem: MenuItem
+    lateinit var searchMenuItem: MenuItem
+    lateinit var logOutMenuItem: MenuItem
+
+    private val adapter = AnimesListAdapter() {
+        navigateToReviewPage(it)
     }
 
     private lateinit var binding: AnimesListPageFragmentBinding
@@ -85,12 +89,11 @@ open class AnimesListPageFragment : Fragment() {
         adapter.submitList(list)
     }
 
-    open fun navigateToReviewPage(item : AnimeData){
+    open fun navigateToReviewPage(item: AnimeData) {
         animeItemViewModel.setSelectedAnimeItem(item)
-//        findNavController().navigate(R.id.navigate_to_review_page)
-//        viewModel.onNavigatedToReviewPage()
     }
-//
+
+    //
     fun displayAnimeList(search: String, myList: Boolean, tags: String, limit: Int) {
         val ctx = context
         if (ctx == null) {
@@ -111,5 +114,23 @@ open class AnimesListPageFragment : Fragment() {
         binding.emptyListMessageTextview.visibility = View.VISIBLE
 
         binding.animesListRecyclerview.visibility = View.GONE
+    }
+
+    fun showActionBarMenuItems(showItems : Boolean){
+        if(showItems){
+            addReviewMenuItem.isVisible = true
+
+            searchMenuItem.isVisible = true
+
+            logOutMenuItem.isVisible = true
+
+        } else {
+
+            addReviewMenuItem.isVisible = false
+
+            searchMenuItem.isVisible = false
+
+            logOutMenuItem.isVisible = false
+        }
     }
 }

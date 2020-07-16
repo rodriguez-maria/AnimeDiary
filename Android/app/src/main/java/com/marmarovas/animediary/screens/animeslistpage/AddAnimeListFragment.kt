@@ -1,10 +1,8 @@
 package com.marmarovas.animediary.screens.animeslistpage
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -32,36 +30,46 @@ class AddAnimeListFragment : AnimesListPageFragment() {
         //Get list of animes to add to user's collection
         displayAnimeList("", false, "", 50)
 
-        //Add observers
-        addObservers()
-
-        //set right action bar menu for this screen
-        actionBarViewModel.showAddReviewPageActionBarMenu.sendAction(true)
+        //Set action bar title and subtitle
+        actionBarViewModel.setActionBarTitle(getString(R.string.app_name))
 
         //show action bar on this fragment
         actionBarViewModel.setShowActionBar(true)
 
+        //Allow this fragment to access the menu items in the action bar
+        setHasOptionsMenu(true)
+
         return view
     }
 
-    override fun onDestroy() {
-        actionBarViewModel.collapseSearchAction.sendAction(true)
-        super.onDestroy()
-    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        addReviewMenuItem = menu.findItem(R.id.action_add_review)
+        searchMenuItem = menu.findItem(R.id.action_search)
+        logOutMenuItem = menu.findItem(R.id.action_log_out)
 
-    private fun addObservers(){
-        //Observe when to return to previous screen
-        actionBarViewModel.goToMyAnimeCollectionPage.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                findNavController().navigate(R.id.action_addAnimeListFragment_to_myCollectionListFragment)
+        showActionBarMenuItems(false)
+        searchMenuItem.expandActionView()
+
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                navigateToMyCollectionsFragment()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return true
             }
         })
     }
 
-    override fun navigateToReviewPage(item : AnimeData){
+    override fun navigateToReviewPage(item: AnimeData) {
         super.navigateToReviewPage(item)
         val action = AddAnimeListFragmentDirections.navigateToReviewPage(true)
         findNavController().navigate(action)
+    }
+
+    private fun navigateToMyCollectionsFragment() {
+        findNavController().navigate(R.id.action_addAnimeListFragment_to_myCollectionListFragment)
     }
 
 }

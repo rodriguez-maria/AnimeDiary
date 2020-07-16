@@ -2,30 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--Add-->
-    <item
-        android:id="@+id/action_add_review"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="Add Anime Review"
-        app:showAsAction="ifRoom" />
+<!--    &lt;!&ndash;Add&ndash;&gt;-->
+<!--    <item-->
+<!--        android:id="@+id/action_add_review"-->
+<!--        android:icon="@android:drawable/ic_input_add"-->
+<!--        android:title="Add Anime Review"-->
+<!--        app:showAsAction="ifRoom" />-->
 
-    <!--search-->
-    <item
-        android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="Search"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+<!--    &lt;!&ndash;search&ndash;&gt;-->
+<!--    <item-->
+<!--        android:id="@+id/action_search"-->
+<!--        android:icon="@android:drawable/ic_menu_search"-->
+<!--        android:title="Search"-->
+<!--        app:showAsAction="ifRoom|collapseActionView"-->
+<!--        app:actionViewClass="androidx.appcompat.widget.SearchView" />-->
 
-    <!--save changes-->
-    <item
-        android:id="@+id/action_save_or_edit"
-        android:title="@string/edit_text"
-        app:showAsAction="ifRoom|collapseActionView" />
+<!--    &lt;!&ndash;save changes&ndash;&gt;-->
+<!--    <item-->
+<!--        android:id="@+id/action_save_or_edit"-->
+<!--        android:title="@string/edit_text"-->
+<!--        app:showAsAction="ifRoom|collapseActionView" />-->
 
-    <!--Log out-->
-    <item
-        android:id="@+id/action_log_out"
-        android:title="Log out"
-        app:showAsAction="never|collapseActionView" />
+<!--    &lt;!&ndash;Log out&ndash;&gt;-->
+<!--    <item-->
+<!--        android:id="@+id/action_log_out"-->
+<!--        android:title="Log out"-->
+<!--        app:showAsAction="never|collapseActionView" />-->
 </menu>
